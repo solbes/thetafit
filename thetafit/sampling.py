@@ -15,6 +15,12 @@ def accept(acc_prob):
         return False
 
 
+def out_of_bounds(theta, bounds):
+
+    th_out = [(th < bnd[0]) or (th > bnd[1]) for th, bnd in zip(theta, bounds)]
+    return any(th_out)
+
+
 def sample(ssfun, data, params, options):
 
     ssfun_vec, names_opt, th_no_opt = vectorize_ssfun(ssfun, data, params)
@@ -33,26 +39,40 @@ def sample(ssfun, data, params, options):
 
     prop_cov = options.qcov
 
+    rej = 0
+    rejb = 0
     for isimu in range(1, options.nsimu):
+
         newpar = np.random.multivariate_normal(oldpar, prop_cov)
-        newss = ssfun_vec(newpar)
 
-        acc_prob = np.exp(-0.5 * (newss - oldss))
-
-        if accept(acc_prob):
-            chain[isimu, :] = newpar
-            oldpar = newpar.copy()
-            oldss = newss
-        else:
+        if out_of_bounds(newpar, bounds):
+            rej += 1
+            rejb += 1
             chain[isimu, :] = oldpar
+        else:
+            newss = ssfun_vec(newpar)
+            acc_prob = np.exp(-0.5 * (newss - oldss))
+
+            if accept(acc_prob):
+                chain[isimu, :] = newpar
+                oldpar = newpar.copy()
+                oldss = newss
+            else:
+                rej += 1
+                chain[isimu, :] = oldpar
 
         adapt = np.mod(isimu, options.adaptint) == 0 \
             if options.adaptint > 0 else False
-
         if adapt:
             prop_cov = np.cov(chain[0:isimu, :], rowvar=False)
             if len(oldpar) == 1:
                 prop_cov = prop_cov[np.newaxis, np.newaxis]
+
+        doprint = np.mod(isimu, options.printint) == 0 \
+            if options.printint > 0 else False
+        if doprint:
+            print('i: %i, rejected: %.1f%%, out of bounds: %.1f%%' %
+                  (isimu, rej/isimu*100, rejb/isimu*100))
 
     chain_dict = dict(zip(names_opt, chain.T))
 
