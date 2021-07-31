@@ -24,11 +24,11 @@ def out_of_bounds(theta, bounds):
 def sample(ssfun, data, params, options):
 
     ssfun_vec, names_opt, th_no_opt = vectorize_ssfun(ssfun, data, params)
+    bounds = [(par.minimum, par.maximum) for par in params if par.target]
 
     oldpar = np.array([par.init for par in params if par.target])
+    assert not out_of_bounds(oldpar, bounds), "initial parameters out of bounds"
     oldss = ssfun_vec(oldpar)
-
-    bounds = [(par.minimum, par.maximum) for par in params if par.target]
 
     print('Sampling these parameters:\nname\tstart\t[min,max]')
     for name, init, bound in zip(names_opt, oldpar, bounds):
@@ -36,6 +36,9 @@ def sample(ssfun, data, params, options):
 
     chain = np.zeros((options.nsimu, len(oldpar)))
     chain[0, :] = oldpar
+
+    sschain = np.zeros(options.nsimu)
+    sschain[0] = oldss
 
     prop_cov = options.qcov
 
@@ -49,17 +52,20 @@ def sample(ssfun, data, params, options):
             rej += 1
             rejb += 1
             chain[isimu, :] = oldpar
+            sschain[isimu] = oldss
         else:
             newss = ssfun_vec(newpar)
             acc_prob = np.exp(-0.5 * (newss - oldss))
 
             if accept(acc_prob):
                 chain[isimu, :] = newpar
+                sschain[isimu] = newss
                 oldpar = newpar.copy()
                 oldss = newss
             else:
                 rej += 1
                 chain[isimu, :] = oldpar
+                sschain[isimu] = oldss
 
         adapt = np.mod(isimu, options.adaptint) == 0 \
             if options.adaptint > 0 else False
@@ -76,4 +82,4 @@ def sample(ssfun, data, params, options):
 
     chain_dict = dict(zip(names_opt, chain.T))
 
-    return pd.DataFrame({**chain_dict, **th_no_opt})
+    return pd.DataFrame({**chain_dict, **th_no_opt}), sschain
