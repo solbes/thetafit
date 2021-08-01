@@ -82,4 +82,14 @@ def sample(ssfun, data, params, options):
 
     chain_dict = dict(zip(names_opt, chain.T))
 
-    return pd.DataFrame({**chain_dict, **th_no_opt}), sschain
+    # collect results
+    results = {
+        'N': options.nsimu,
+        'accepted': (options.nsimu-rej)/options.nsimu*100,
+        'rejected': rej/options.nsimu*100,
+        'out_of_bounds': rejb/options.nsimu*100,
+        'qcov': prop_cov,
+        'last': chain[-1, :],
+    }
+
+    return results, pd.DataFrame({**chain_dict, **th_no_opt}), sschain
