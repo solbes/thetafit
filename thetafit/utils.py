@@ -45,3 +45,28 @@ def vectorize_ssfun(ssfun, data, params):
         return ssfun(th_dict, data)
 
     return ssfun_vec, names_opt, th_no_opt
+
+
+def jacob(fun, x, params, hrel=1e-6, habs=1e-12, **fun_kwargs):
+
+    th0 = {par.name: par.init for par in params}
+    y0 = fun(th0, x, **fun_kwargs)
+
+    names_target = [par.name for par in params if par.target]
+
+    n = len(y0)
+    p = len(names_target)
+    J = np.zeros((n, p))
+
+    for i, name in enumerate(names_target):
+        hi = max(hrel*th0[name], habs)
+
+        thi_plus, thi_minus = th0.copy(), th0.copy()
+        thi_plus[name] += hi
+        thi_minus[name] -= hi
+
+        J[:, i] = (
+            fun(thi_plus, x, **fun_kwargs) - fun(thi_minus, x, **fun_kwargs)
+        ) / (2*hi)
+
+    return J
