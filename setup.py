@@ -15,7 +15,7 @@ setup(
     author_email='antti.solonen@gmail.com',
     description='Parameter estimation for nonlinear models',
     keywords=['bayes', 'nonlinear', 'parameter estimation'],
-    install_requires=['numpy', 'scipy'],
+    install_requires=['numpy', 'scipy', 'pandas', 'matplotlib'],
     extras_require={
         'dev': ['pytest']
     },
