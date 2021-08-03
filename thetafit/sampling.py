@@ -70,7 +70,8 @@ def sample(ssfun, data, params, options):
         adapt = np.mod(isimu, options.adaptint) == 0 \
             if options.adaptint > 0 else False
         if adapt:
-            prop_cov = np.cov(chain[0:isimu, :], rowvar=False)
+            qcov_scale = 2.4**2/len(names_opt)
+            prop_cov = qcov_scale*np.cov(chain[0:isimu, :], rowvar=False)
             if len(oldpar) == 1:
                 prop_cov = prop_cov[np.newaxis, np.newaxis]
 
