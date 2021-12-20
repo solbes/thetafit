@@ -78,6 +78,22 @@ options = McmcOptions(nsimu=4000, qcov=qcov, adaptint=100, printint=500)
 res, chain, sschain = sample(ssfun, data, params(thopt), options)
 ```
 
+which outputs the progress of the sampling:
+
+```
+Sampling these parameters:
+name	start	[min,max]
+a	0.14541945253897567	[-inf,inf]
+b	49.05274598150096	[-inf,inf]
+i: 500, rejected: 60.8%, out of bounds: 0.0%
+i: 1000, rejected: 62.6%, out of bounds: 0.0%
+i: 1500, rejected: 63.8%, out of bounds: 0.0%
+i: 2000, rejected: 64.3%, out of bounds: 0.0%
+i: 2500, rejected: 64.9%, out of bounds: 0.0%
+i: 3000, rejected: 65.5%, out of bounds: 0.0%
+i: 3500, rejected: 65.8%, out of bounds: 0.0%
+```
+
 Then, let us visualize the results:
 
 ```python
