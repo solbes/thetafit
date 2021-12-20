@@ -1,10 +1,12 @@
 # thetafit
 
-A simple python tool for Bayesian parameter estimation of nonlinear models, inspired by the MATLAB package <url>https://github.com/mjlaine/mcmcstat</url>.
+A simple python tool for Bayesian parameter estimation of nonlinear models, inspired by the [mcmcstat MATLAB package](https://github.com/mjlaine/mcmcstat).
 
 Supports MAP estimation (optimization) and MCMC sampling via the Adaptive Metropolis (AM) algorithm.
 
 The user supplies the function for calculating ``-2*log(likelihood)``, which, for Gaussian likelihood, amounts to calculating the sum of squares misfit between data and model.
+
+A simple example is given below, for more examples see the [demos](https://github.com/solbes/thetafit/tree/main/demos) folder.
 
 ## Example: MONOD model
 
