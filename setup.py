@@ -9,7 +9,7 @@ setup(
     version='0.0.1',
     packages=['thetafit'],
     url='https://github.com/solbes/thetafit',
-    #download_url = 'https://github.com/solbes/blinpy/archive/refs/tags/0.1.4.1.tar.gz',
+    download_url = 'https://github.com/solbes/thetafit/archive/refs/tags/0.0.1.tar.gz',
     license='MIT',
     author='Antti Solonen',
     author_email='antti.solonen@gmail.com',
