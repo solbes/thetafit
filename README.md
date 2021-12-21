@@ -8,6 +8,10 @@ The user supplies the function for calculating ``-2*log(likelihood)``, which, fo
 
 A simple example is given below, for more examples see the [demos](https://github.com/solbes/thetafit/tree/main/demos) folder.
 
+## Installation
+
+``pip install thetafit``
+
 ## Example: MONOD model
 
 Let us fit the parameters ``theta = [a,b]`` of a simple model ``y = ax/(b+x) + N(0,sig2)``, describing bacterial growth.
